@@ -2,9 +2,12 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useThemeContext } from '../context/ThemeContext';
+
 
 export default function FavoritesScreen() {
   const [favorites, setFavorites] = useState<string[]>([]);
+  const { theme } = useThemeContext();
 
   useEffect(() => {
     const loadFavorites = async () => {
@@ -16,9 +19,11 @@ export default function FavoritesScreen() {
   }, []);
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 py-6">
-      <Text className="text-2xl font-bold mb-4 text-center">Favorite Quotes</Text>
-      {favorites.length === 0 ? (
+  <ScrollView className={`flex-1 px-4 py-6 ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
+    <Text className={`text-2xl font-bold text-center mb-4 ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+      Favorite Quotes
+    </Text>
+    {favorites.length === 0 ? (
         <Text className="text-center text-gray-500">No favorites yet.</Text>
       ) : (
         favorites.map((q, idx) => (

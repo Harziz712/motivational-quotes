@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Text, View, Button, ActivityIndicator, Share } from 'react-native';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import Animated, {
@@ -10,14 +9,21 @@ import Animated, {
   Layout,
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useThemeContext } from '../context/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types';
 
 
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function HomeScreen() {
   const [quote, setQuote] = useState('');
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>(); 
 
+  const { theme , toggleTheme  } = useThemeContext();
   const fetchQuote = async () => {
     try {
       setLoading(true);
@@ -66,12 +72,32 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <View className="flex-1 justify-center px-4 bg-white">
+  <View className={`flex-1 justify-center px-4 ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
+      <TouchableOpacity
+  onPress={toggleTheme}
+  className={`flex-row items-center justify-center ${
+    theme === 'light' ? 'bg-black' : 'bg-white'
+  } py-3 px-4 rounded-lg mt-2`}
+>
+  <Ionicons
+    name={theme === 'light' ? 'moon' : 'sunny'}
+    size={20}
+    color={theme === 'light' ? '#fff' : '#000'}
+  />
+  <Text
+    className={`font-semibold ml-2 ${
+      theme === 'light' ? 'text-white' : 'text-black'
+    }`}
+  >
+    {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+  </Text>
+</TouchableOpacity>
+
    {loading ? (
   <ActivityIndicator size="large" color="#000" />
 ) : (
   <Animated.Text
-    className="text-xl italic mb-5 text-center"
+    className={`text-xl italic mb-5 text-center ${theme === 'light' ? 'text-black' : 'text-white'}`}
     entering={FadeIn}
     exiting={FadeOut}
     layout={Layout}
